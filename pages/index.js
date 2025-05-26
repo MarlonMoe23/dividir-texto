@@ -57,9 +57,20 @@ export default function Home() {
     URL.revokeObjectURL(url);
   };
 
+  const copyToClipboard = async (content) => {
+    try {
+      await navigator.clipboard.writeText(content);
+      alert("Texto copiado al portapapeles.");
+    } catch (err) {
+      alert("Error al copiar el texto.");
+    }
+  };
+
   return (
     <main style={{ padding: 20, fontFamily: "sans-serif", maxWidth: 600, margin: "0 auto" }}>
-      <h1 style={{ fontSize: 24, marginBottom: 16 }}>Dividir texto en partes (1550 palabras con solapamiento)</h1>
+      <h1 style={{ fontSize: 24, marginBottom: 16 }}>
+        Dividir texto en partes
+      </h1>
 
       <textarea
         placeholder="Pega tu texto aquí..."
@@ -68,10 +79,9 @@ export default function Home() {
         style={{ width: "100%", height: 200, marginBottom: 10, padding: 10, color: "#000" }}
       />
 
-<p style={{ marginBottom: 10 }}>
-  Palabras: {text.trim() ? text.trim().split(/\s+/).length : 0}
-</p>
-
+      <p style={{ marginBottom: 10 }}>
+        Palabras: {text.trim() ? text.trim().split(/\s+/).length : 0}
+      </p>
 
       <div style={{ marginBottom: 10 }}>
         <input type="file" accept=".txt,.docx" onChange={handleFileUpload} />
@@ -94,7 +104,7 @@ export default function Home() {
 
       {parts.length > 0 && (
         <div>
-          <h2 style={{ fontSize: 20, marginBottom: 10 }}>Descargar partes:</h2>
+          <h2 style={{ fontSize: 20, marginBottom: 10 }}>Descargar o copiar partes:</h2>
           <ul style={{ paddingLeft: 20 }}>
             {parts.map((part, index) => (
               <li key={index} style={{ marginBottom: 8 }}>
@@ -107,9 +117,24 @@ export default function Home() {
                     border: "none",
                     borderRadius: 4,
                     cursor: "pointer",
+                    marginRight: 10,
                   }}
                 >
                   Descargar parte {index + 1}
+                </button>
+
+                <button
+                  onClick={() => copyToClipboard(part)}
+                  style={{
+                    padding: "6px 12px",
+                    background: "#0077cc",
+                    color: "#fff",
+                    border: "none",
+                    borderRadius: 4,
+                    cursor: "pointer",
+                  }}
+                >
+                  Copiar parte {index + 1}
                 </button>
               </li>
             ))}
