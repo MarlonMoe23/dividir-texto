@@ -68,6 +68,11 @@ export default function Home() {
         style={{ width: "100%", height: 200, marginBottom: 10, padding: 10, color: "#000" }}
       />
 
+<p style={{ marginBottom: 10 }}>
+  Palabras: {text.trim() ? text.trim().split(/\s+/).length : 0}
+</p>
+
+
       <div style={{ marginBottom: 10 }}>
         <input type="file" accept=".txt,.docx" onChange={handleFileUpload} />
       </div>
