@@ -1,4 +1,5 @@
 import { useState } from "react";
+import mammoth from "mammoth";
 
 export default function Home() {
   const [text, setText] = useState("");
@@ -7,17 +8,34 @@ export default function Home() {
   const handleFileUpload = (e) => {
     const file = e.target.files[0];
     if (!file) return;
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      setText(event.target.result);
-    };
-    reader.readAsText(file);
+
+    if (file.name.endsWith(".txt")) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        setText(event.target.result);
+      };
+      reader.readAsText(file);
+    } else if (file.name.endsWith(".docx")) {
+      const reader = new FileReader();
+      reader.onload = async (event) => {
+        try {
+          const arrayBuffer = event.target.result;
+          const result = await mammoth.extractRawText({ arrayBuffer });
+          setText(result.value);
+        } catch (error) {
+          alert("Error al leer el archivo Word.");
+        }
+      };
+      reader.readAsArrayBuffer(file);
+    } else {
+      alert("Formato no soportado. Usa .txt o .docx");
+    }
   };
 
   const splitText = () => {
     if (!text.trim()) return;
     const words = text.trim().split(/\s+/);
-    const chunkSize = 1450;
+    const chunkSize = 1550;
     const overlap = 50;
     const chunks = [];
 
@@ -44,23 +62,29 @@ export default function Home() {
       await navigator.clipboard.writeText(content);
       alert("Texto copiado al portapapeles.");
     } catch (err) {
-      alert("No se pudo copiar el texto.");
+      alert("Error al copiar el texto.");
     }
   };
 
   return (
     <main style={{ padding: 20, fontFamily: "sans-serif", maxWidth: 600, margin: "0 auto" }}>
-      <h1 style={{ fontSize: 24, marginBottom: 16 }}>Dividir texto en partes (con solapamiento)</h1>
+      <h1 style={{ fontSize: 24, marginBottom: 16 }}>
+        Dividir texto en partes
+      </h1>
 
       <textarea
         placeholder="Pega tu texto aquí..."
         value={text}
         onChange={(e) => setText(e.target.value)}
-        style={{ width: "100%", height: 200, marginBottom: 10, padding: 10 }}
+        style={{ width: "100%", height: 200, marginBottom: 10, padding: 10, color: "#000" }}
       />
 
+      <p style={{ marginBottom: 10 }}>
+        Palabras: {text.trim() ? text.trim().split(/\s+/).length : 0}
+      </p>
+
       <div style={{ marginBottom: 10 }}>
-        <input type="file" accept=".txt" onChange={handleFileUpload} />
+        <input type="file" accept=".txt,.docx" onChange={handleFileUpload} />
       </div>
 
       <button
@@ -80,7 +104,7 @@ export default function Home() {
 
       {parts.length > 0 && (
         <div>
-          <h2 style={{ fontSize: 20, marginBottom: 10 }}>Acciones por parte:</h2>
+          <h2 style={{ fontSize: 20, marginBottom: 10 }}>Descargar o copiar partes:</h2>
           <ul style={{ paddingLeft: 20 }}>
             {parts.map((part, index) => (
               <li key={index} style={{ marginBottom: 8 }}>
@@ -98,11 +122,12 @@ export default function Home() {
                 >
                   Descargar parte {index + 1}
                 </button>
+
                 <button
                   onClick={() => copyToClipboard(part)}
                   style={{
                     padding: "6px 12px",
-                    background: "#007bff",
+                    background: "#0077cc",
                     color: "#fff",
                     border: "none",
                     borderRadius: 4,

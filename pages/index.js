@@ -67,80 +67,205 @@ export default function Home() {
   };
 
   return (
-    <main style={{ padding: 20, fontFamily: "sans-serif", maxWidth: 600, margin: "0 auto" }}>
-      <h1 style={{ fontSize: 24, marginBottom: 16 }}>
-        Dividir texto en partes
-      </h1>
+    <main style={{ 
+      padding: 30, 
+      fontFamily: "Arial, sans-serif", 
+      maxWidth: 1200, 
+      margin: "0 auto",
+      backgroundColor: "#f8f9fa",
+      minHeight: "100vh"
+    }}>
+      <div style={{
+        backgroundColor: "#ffffff",
+        padding: 30,
+        borderRadius: 12,
+        boxShadow: "0 2px 10px rgba(0,0,0,0.1)"
+      }}>
+        <h1 style={{ 
+          fontSize: 32, 
+          marginBottom: 30,
+          color: "#2c3e50",
+          textAlign: "center",
+          fontWeight: "600"
+        }}>
+          Dividir texto en partes
+        </h1>
 
-      <textarea
-        placeholder="Pega tu texto aquí..."
-        value={text}
-        onChange={(e) => setText(e.target.value)}
-        style={{ width: "100%", height: 200, marginBottom: 10, padding: 10, color: "#000" }}
-      />
-
-      <p style={{ marginBottom: 10 }}>
-        Palabras: {text.trim() ? text.trim().split(/\s+/).length : 0}
-      </p>
-
-      <div style={{ marginBottom: 10 }}>
-        <input type="file" accept=".txt,.docx" onChange={handleFileUpload} />
-      </div>
-
-      <button
-        onClick={splitText}
-        style={{
-          padding: "10px 20px",
-          background: "#000",
-          color: "#fff",
-          border: "none",
-          borderRadius: 4,
-          cursor: "pointer",
-          marginBottom: 20,
-        }}
-      >
-        Dividir texto
-      </button>
-
-      {parts.length > 0 && (
-        <div>
-          <h2 style={{ fontSize: 20, marginBottom: 10 }}>Descargar o copiar partes:</h2>
-          <ul style={{ paddingLeft: 20 }}>
-            {parts.map((part, index) => (
-              <li key={index} style={{ marginBottom: 8 }}>
-                <button
-                  onClick={() => downloadPart(part, index)}
-                  style={{
-                    padding: "6px 12px",
-                    background: "#008000",
-                    color: "#fff",
-                    border: "none",
-                    borderRadius: 4,
-                    cursor: "pointer",
-                    marginRight: 10,
-                  }}
-                >
-                  Descargar parte {index + 1}
-                </button>
-
-                <button
-                  onClick={() => copyToClipboard(part)}
-                  style={{
-                    padding: "6px 12px",
-                    background: "#0077cc",
-                    color: "#fff",
-                    border: "none",
-                    borderRadius: 4,
-                    cursor: "pointer",
-                  }}
-                >
-                  Copiar parte {index + 1}
-                </button>
-              </li>
-            ))}
-          </ul>
+        <div style={{ marginBottom: 25 }}>
+          <label style={{ 
+            display: "block", 
+            marginBottom: 10, 
+            fontSize: 16, 
+            fontWeight: "500",
+            color: "#34495e"
+          }}>
+            Texto a dividir:
+          </label>
+          <textarea
+            placeholder="Pega tu texto aquí o sube un archivo..."
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            style={{ 
+              width: "100%", 
+              height: 300, 
+              padding: 15, 
+              fontSize: 14,
+              border: "2px solid #e9ecef",
+              borderRadius: 8,
+              resize: "vertical",
+              fontFamily: "inherit",
+              color: "#2c3e50",
+              backgroundColor: "#ffffff"
+            }}
+          />
         </div>
-      )}
+
+        <div style={{ 
+          display: "flex", 
+          justifyContent: "space-between", 
+          alignItems: "center",
+          marginBottom: 25,
+          padding: 15,
+          backgroundColor: "#f1f3f4",
+          borderRadius: 8
+        }}>
+          <p style={{ 
+            margin: 0, 
+            fontSize: 16, 
+            fontWeight: "500",
+            color: "#2c3e50"
+          }}>
+            Palabras: <span style={{ color: "#27ae60" }}>
+              {text.trim() ? text.trim().split(/\s+/).length : 0}
+            </span>
+          </p>
+          
+          <div>
+            <input 
+              type="file" 
+              accept=".txt,.docx" 
+              onChange={handleFileUpload}
+              style={{
+                padding: 8,
+                border: "1px solid #bdc3c7",
+                borderRadius: 6,
+                backgroundColor: "#ffffff"
+              }}
+            />
+          </div>
+        </div>
+
+        <div style={{ textAlign: "center", marginBottom: 30 }}>
+          <button
+            onClick={splitText}
+            style={{
+              padding: "15px 30px",
+              background: "#3498db",
+              color: "#fff",
+              border: "none",
+              borderRadius: 8,
+              cursor: "pointer",
+              fontSize: 16,
+              fontWeight: "500",
+              transition: "background-color 0.3s"
+            }}
+            onMouseOver={(e) => e.target.style.backgroundColor = "#2980b9"}
+            onMouseOut={(e) => e.target.style.backgroundColor = "#3498db"}
+          >
+            Dividir texto en partes
+          </button>
+        </div>
+
+        {parts.length > 0 && (
+          <div style={{
+            backgroundColor: "#f8f9fa",
+            padding: 25,
+            borderRadius: 8,
+            border: "1px solid #e9ecef"
+          }}>
+            <h2 style={{ 
+              fontSize: 24, 
+              marginBottom: 20,
+              color: "#2c3e50",
+              textAlign: "center"
+            }}>
+              Partes generadas: {parts.length}
+            </h2>
+            
+            <div style={{ 
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
+              gap: 15
+            }}>
+              {parts.map((part, index) => (
+                <div key={index} style={{
+                  padding: 20,
+                  backgroundColor: "#ffffff",
+                  borderRadius: 8,
+                  border: "1px solid #e9ecef",
+                  boxShadow: "0 1px 3px rgba(0,0,0,0.1)"
+                }}>
+                  <h3 style={{
+                    margin: "0 0 15px 0",
+                    fontSize: 18,
+                    color: "#2c3e50"
+                  }}>
+                    Parte {index + 1}
+                  </h3>
+                  
+                  <p style={{
+                    margin: "0 0 15px 0",
+                    fontSize: 14,
+                    color: "#7f8c8d"
+                  }}>
+                    {part.split(/\s+/).length} palabras
+                  </p>
+                  
+                  <div style={{ display: "flex", gap: 10 }}>
+                    <button
+                      onClick={() => downloadPart(part, index)}
+                      style={{
+                        flex: 1,
+                        padding: "10px 15px",
+                        background: "#27ae60",
+                        color: "#fff",
+                        border: "none",
+                        borderRadius: 6,
+                        cursor: "pointer",
+                        fontSize: 14,
+                        fontWeight: "500"
+                      }}
+                      onMouseOver={(e) => e.target.style.backgroundColor = "#229954"}
+                      onMouseOut={(e) => e.target.style.backgroundColor = "#27ae60"}
+                    >
+                      Descargar
+                    </button>
+
+                    <button
+                      onClick={() => copyToClipboard(part)}
+                      style={{
+                        flex: 1,
+                        padding: "10px 15px",
+                        background: "#9b59b6",
+                        color: "#fff",
+                        border: "none",
+                        borderRadius: 6,
+                        cursor: "pointer",
+                        fontSize: 14,
+                        fontWeight: "500"
+                      }}
+                      onMouseOver={(e) => e.target.style.backgroundColor = "#8e44ad"}
+                      onMouseOut={(e) => e.target.style.backgroundColor = "#9b59b6"}
+                    >
+                      Copiar
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
     </main>
   );
 }
