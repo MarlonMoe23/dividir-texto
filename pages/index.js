@@ -4,6 +4,7 @@ import mammoth from "mammoth";
 export default function Home() {
   const [text, setText] = useState("");
   const [parts, setParts] = useState([]);
+  const [copiedParts, setCopiedParts] = useState(new Set());
 
   const handleFileUpload = (e) => {
     const file = e.target.files[0];
@@ -45,6 +46,7 @@ export default function Home() {
     }
 
     setParts(chunks);
+    setCopiedParts(new Set()); // Reset copied parts when splitting new text
   };
 
   const downloadPart = (content, index) => {
@@ -57,9 +59,10 @@ export default function Home() {
     URL.revokeObjectURL(url);
   };
 
-  const copyToClipboard = async (content) => {
+  const copyToClipboard = async (content, index) => {
     try {
       await navigator.clipboard.writeText(content);
+      setCopiedParts(prev => new Set([...prev, index]));
       alert("Texto copiado al portapapeles.");
     } catch (err) {
       alert("Error al copiar el texto.");
@@ -189,7 +192,7 @@ export default function Home() {
               color: "#2c3e50",
               textAlign: "center"
             }}>
-              Partes generadas: {parts.length}
+              Partes generadas: {parts.length} | Copiadas: {copiedParts.size}
             </h2>
             
             <div style={{ 
@@ -205,13 +208,29 @@ export default function Home() {
                   border: "1px solid #e9ecef",
                   boxShadow: "0 1px 3px rgba(0,0,0,0.1)"
                 }}>
-                  <h3 style={{
-                    margin: "0 0 15px 0",
-                    fontSize: 18,
-                    color: "#2c3e50"
+                  <div style={{ 
+                    display: "flex", 
+                    alignItems: "center", 
+                    marginBottom: 15 
                   }}>
-                    Parte {index + 1}
-                  </h3>
+                    <input
+                      type="checkbox"
+                      checked={copiedParts.has(index)}
+                      readOnly
+                      style={{
+                        marginRight: 10,
+                        transform: "scale(1.2)",
+                        accentColor: "#3498db"
+                      }}
+                    />
+                    <h3 style={{
+                      margin: 0,
+                      fontSize: 18,
+                      color: "#2c3e50"
+                    }}>
+                      Parte {index + 1}
+                    </h3>
+                  </div>
                   
                   <p style={{
                     margin: "0 0 15px 0",
@@ -242,11 +261,11 @@ export default function Home() {
                     </button>
 
                     <button
-                      onClick={() => copyToClipboard(part)}
+                      onClick={() => copyToClipboard(part, index)}
                       style={{
                         flex: 1,
                         padding: "10px 15px",
-                        background: "#9b59b6",
+                        background: "#2980b9",
                         color: "#fff",
                         border: "none",
                         borderRadius: 6,
@@ -254,8 +273,8 @@ export default function Home() {
                         fontSize: 14,
                         fontWeight: "500"
                       }}
-                      onMouseOver={(e) => e.target.style.backgroundColor = "#8e44ad"}
-                      onMouseOut={(e) => e.target.style.backgroundColor = "#9b59b6"}
+                      onMouseOver={(e) => e.target.style.backgroundColor = "#1f618d"}
+                      onMouseOut={(e) => e.target.style.backgroundColor = "#2980b9"}
                     >
                       Copiar
                     </button>
